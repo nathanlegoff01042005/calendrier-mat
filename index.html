@@ -191,7 +191,7 @@ h1 span{color:var(--or)}
 .btn:focus-visible,.choix button:focus-visible{outline:2px solid var(--encre);outline-offset:2px}
 
 /* Puzzle */
-.puzzle{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;width:100%;max-width:360px;aspect-ratio:1;margin:0 auto;background:#e3cdb8;padding:3px;border-radius:6px}
+.puzzle{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);gap:3px;width:100%;max-width:340px;aspect-ratio:1;margin:0 auto;background:#e3cdb8;padding:3px;border-radius:6px}
 .puzzle button{border:0;padding:0;background-repeat:no-repeat;background-size:300% 300%;cursor:pointer;border-radius:2px}
 .puzzle button.choisi{outline:3px solid #a0485c;outline-offset:-3px}
 .puzzle.fini{gap:0;padding:0;transition:gap .4s}
@@ -282,7 +282,7 @@ const JOURS = [
   { date:"2026-11-29", titre:"Un peu de douceur", type:"chocolat", texte:"Premier dimanche de l'Avent. Quelqu'un va bientôt sonner chez toi… 🍫" },
   { date:"2026-11-30", titre:"Écoute-moi", type:"message", texte:"", audio:"", brouillon:true },
   { date:"2026-12-01", titre:"Coucou d'ici", type:"message", texte:"", photos:[], brouillon:true },
-  { date:"2026-12-02", titre:"Reconstitue-nous", type:"puzzle", image:IMG_PUZZLE, texte:"Échange les morceaux pour retrouver la photo.", brouillon:true },
+  { date:"2026-12-02", titre:"Reconstitue-nous", type:"puzzle", image:"photos/j07-puzzle.jpg", ratio:"3/4", texte:"Échange les morceaux pour retrouver la photo… et le petit mot qui va avec." },
   { date:"2026-12-03", titre:"Bon pour…", type:"bon", quoi:"(à définir)", valable:"Valable à Paris, sans date d'expiration", brouillon:true },
   { date:"2026-12-04", titre:"Une petite vidéo", type:"message", texte:"", video:"", brouillon:true },
   { date:"2026-12-05", titre:"Comment je te vois", type:"quiz", texte:"Devine ce que je pense de toi…", brouillon:true,
@@ -405,7 +405,7 @@ function ouvrir(jour, i, bouton){
   if(jour.audio) h += `<audio controls preload="metadata" src="${echap(jour.audio)}"></audio>`;
   if(jour.lien?.url) h += `<a class="lien" href="${echap(jour.lien.url)}" target="_blank" rel="noopener">${echap(jour.lien.texte||"Ouvrir")}</a>`;
   if(jour.type==="quiz") h += `<div class="quiz" id="quiz"></div>`;
-  if(jour.type==="puzzle") h += `<div class="puzzle" id="puzzle"></div><p class="aide" id="aide-puzzle">Touche deux morceaux pour les échanger</p>`;
+  if(jour.type==="puzzle") h += `<div class="puzzle" id="puzzle" style="aspect-ratio:${jour.ratio||"1"}"></div><p class="aide" id="aide-puzzle">Touche deux morceaux pour les échanger</p>`;
   if(jour.type==="raisons") h += `<ol class="raisons" id="raisons"></ol><button class="btn" id="raison-suivante">Une raison ♥</button>`;
   if(jour.type==="bon") h += `<div class="bon-pour"><span class="tag">Bon pour</span><span class="quoi">${echap(jour.quoi)}</span><span class="valid">${echap(jour.valable)}</span></div><p class="aide">Fais une capture d'écran et garde-la précieusement.</p>`;
   if(jour.type==="final") h += `<div class="rebours" id="rebours"></div>`;
