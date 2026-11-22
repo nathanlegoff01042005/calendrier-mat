@@ -186,6 +186,15 @@ h1 span{color:var(--or)}
 .choix button:hover{border-color:#a0485c}
 .choix button.bon{background:#e5f0e9;border-color:var(--sapin)}
 .choix button.faux{background:#f9e1e4;border-color:#c0596d}
+.choix button{display:flex;gap:10px;align-items:center}
+.choix .case{flex:none;width:18px;height:18px;border-radius:5px;border:1.5px solid #c9a99a;background:#fff;display:grid;place-items:center;font-size:12px;color:#fff}
+.choix button.coche{border-color:#a0485c;background:#fff6f4}
+.choix button.coche .case{background:#a0485c;border-color:#a0485c}
+.choix button.coche .case::after,.choix button.bon .case::after{content:"✓"}
+.choix button.bon .case{background:var(--sapin);border-color:var(--sapin)}
+.choix button.bon{background:#e5f0e9;border-color:var(--sapin)}
+.choix button.faux{background:#f9e1e4;border-color:#c0596d;text-decoration:line-through}
+.verdict{margin:0;font-weight:700;font-size:15px;color:#7a2a3c}
 .reponse{font-family:var(--f-main);font-size:22px;line-height:1.25;margin:0;color:#7a2a3c}
 .btn{align-self:flex-start;font:inherit;font-weight:700;border:0;border-radius:999px;padding:10px 18px;background:#7a2a3c;color:#fff;cursor:pointer}
 .btn:focus-visible,.choix button:focus-visible{outline:2px solid var(--encre);outline-offset:2px}
@@ -314,10 +323,18 @@ const JOURS = [
     ],
     zones:["Dos","Nuque et épaules","Tête et cuir chevelu","Visage","Bras","Mains","Ventre","Fesses","Jambes","Pieds","Partie intime"] },
   { date:"2026-12-04", titre:"Une petite vidéo", type:"message", texte:"", video:"", brouillon:true },
-  { date:"2026-12-05", titre:"Comment je te vois", type:"quiz", texte:"Devine ce que je pense de toi…", brouillon:true,
+  { date:"2026-12-05", titre:"Comment je te vois", type:"quiz", texte:"Devine ce que je pense de toi… Attention : il peut y avoir plusieurs bonnes réponses !",
     questions:[
-      {q:"Exemple : le trait de caractère que je préfère chez toi ?", options:["Réponse A","Réponse B","Réponse C"], bonne:0, mot:"(Ton commentaire après la réponse)"},
-      {q:"Exemple : la partie de toi que je préfère ?", options:["Réponse A","Réponse B","Réponse C"], bonne:1, mot:"(Ton commentaire)"}
+      {q:"Le trait de caractère que je préfère chez toi ?", options:["Ta patience légendaire", "Ton côté attentionné", "Ta ponctualité"], bonnes:[1], mot:"Hé oui, je te trouve extrêmement attentionnée. Peut-être que tu ne t'en rends pas compte, mais tu l'es énormément, avec moi en tout cas."},
+      {q:"La partie de ton corps que je préfère ?", options:["Tes yeux", "Ta bouche", "Tes fesses"], bonnes:[0, 1, 2], mot:"Bah oui, voyons, quelle question !"},
+      {q:"Ce qui m'a fait craquer en premier ?", options:["Aller faire les magasins avec toi…", "Ta combi en jean", "Ton sourire"], bonnes:[1], mot:"J'étais bouche bée."},
+      {q:"Le moment où je te trouve la plus belle ?", options:["Le matin au réveil, les cheveux en pétard", "Quand tu es sur ton 31 pour sortir", "Au moment d'aller dormir, avec ton petit air innocent et timide"], bonnes:[2], mot:"Mention honorable : sous la douche, haha."},
+      {q:"Ton petit défaut que je trouve le plus mignon ?", options:["Quand tu t'énerves pour pas grand-chose", "Quand tu chantes faux à tue-tête", "Quand tu mets une heure à choisir ta tenue"], bonnes:[0], mot:"Tu t'énerves pour trois fois rien… et franchement, c'est trop mignon. Désolé, mais c'est vrai 😇"},
+      {q:"Ce que je préfère faire avec toi ?", options:["Faire les magasins pendant 4 heures", "Aller au bar boire une bonne bière fraîche", "Partir en vacances"], bonnes:[1, 2], mot:"Hé oui, voyons ! N'oublie pas nos moments géniaux au bar, haha."},
+      {q:"Le surnom que je préfère te donner ?", options:["Mat", "Petit pouce", "Ma belle"], bonnes:[0, 1, 2], mot:"Ils sont tous extra, non ?"},
+      {q:"Ta tenue que je préfère ?", options:["La combi en jean", "La dentelle que j'ai vue à Saint-Malo…", "La robe verte"], bonnes:[1], mot:"Je ne dirai rien de plus… mais je m'en souviens très bien 😏"},
+      {q:"Ce qui me fait le plus rire chez toi ?", options:["Quand tu ris à ta blague avant la fin", "Tes imitations, quand tu pars dans de sacrés délires avec moi", "Quand tu as faim et que tu deviens grognon"], bonnes:[1], mot:"Tes imitations, sans hésiter. Quand on part tous les deux dans nos délires, je ne m'arrête plus de rire."},
+      {q:"Ce que j'admire le plus chez toi ?", options:["Ton organisation", "Ta persévérance", "Ta force de caractère"], bonnes:[1, 2], mot:"Ta persévérance et ta force de caractère. Tu ne lâches jamais rien, et ça m'impressionne vraiment."}
     ] },
   { date:"2026-12-06", titre:"Best moments together, épisode 2", type:"message", texte:"", photos:[], brouillon:true },
   { date:"2026-12-07", titre:"Là, maintenant", type:"message", texte:"", photos:[], brouillon:true },
@@ -505,18 +522,31 @@ function quiz(jour){
   const z = document.getElementById("quiz"); let n = 0, score = 0;
   const pose = ()=>{
     if(n >= jour.questions.length){
-      z.innerHTML = `<p class="q">${score} / ${jour.questions.length}</p><p class="reponse">${score===jour.questions.length?"Tu me connais par cœur.":"Tu sais maintenant un peu mieux ce que je pense de toi ♥"}</p>`;
+      const t = jour.questions.length;
+      z.innerHTML = `<p class="q">${score} / ${t}</p><p class="reponse">${score===t?"Tu me connais par cœur ♥":score>=t/2?"Pas mal du tout… tu sais lire dans mes pensées ♥":"Tu sais maintenant un peu mieux ce que je pense de toi ♥"}</p>`;
+      if(score===t) confettis();
       return;
     }
     const q = jour.questions[n];
-    z.innerHTML = `<span class="compteur">Question ${n+1} sur ${jour.questions.length}</span><p class="q">${echap(q.q)}</p><div class="choix">${q.options.map((o,k)=>`<button data-k="${k}">${echap(o)}</button>`).join("")}</div>`;
-    z.querySelectorAll(".choix button").forEach(b=>b.addEventListener("click",()=>{
-      const k = +b.dataset.k; if(k===q.bonne) score++;
-      z.querySelectorAll(".choix button").forEach(x=>{ x.disabled=true; if(+x.dataset.k===q.bonne) x.classList.add("bon"); });
-      if(k!==q.bonne) b.classList.add("faux");
-      z.insertAdjacentHTML("beforeend", `<p class="reponse">${echap(q.mot)}</p><button class="btn" id="q-suivante">${n+1<jour.questions.length?"Question suivante":"Voir mon score"}</button>`);
-      document.getElementById("q-suivante").addEventListener("click",()=>{ n++; pose(); });
+    z.innerHTML = `<span class="compteur">Question ${n+1} sur ${jour.questions.length} · plusieurs réponses possibles</span><p class="q">${echap(q.q)}</p>
+      <div class="choix">${q.options.map((o,k)=>`<button type="button" data-k="${k}" aria-pressed="false"><span class="case"></span>${echap(o)}</button>`).join("")}</div>
+      <button class="btn" id="q-valider" type="button" disabled>Valider</button>`;
+    const boutons = [...z.querySelectorAll(".choix button")], valider = z.querySelector("#q-valider");
+    boutons.forEach(b=>b.addEventListener("click",()=>{
+      const on = b.getAttribute("aria-pressed")!=="true";
+      b.setAttribute("aria-pressed", on); b.classList.toggle("coche", on);
+      valider.disabled = !boutons.some(x=>x.classList.contains("coche"));
     }));
+    valider.addEventListener("click",()=>{
+      const choisis = boutons.filter(x=>x.classList.contains("coche")).map(x=>+x.dataset.k);
+      const juste = choisis.length===q.bonnes.length && choisis.every(k=>q.bonnes.includes(k));
+      if(juste) score++;
+      boutons.forEach(x=>{ const k=+x.dataset.k; x.disabled=true;
+        if(q.bonnes.includes(k)) x.classList.add("bon"); else if(choisis.includes(k)) x.classList.add("faux"); });
+      valider.remove();
+      z.insertAdjacentHTML("beforeend", `<p class="verdict">${juste?"Bonne réponse !":"Raté…"}</p><p class="reponse">${echap(q.mot)}</p><button class="btn" id="q-suivante" type="button">${n+1<jour.questions.length?"Question suivante":"Voir mon score"}</button>`);
+      document.getElementById("q-suivante").addEventListener("click",()=>{ n++; pose(); });
+    });
   };
   pose();
 }
