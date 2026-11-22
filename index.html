@@ -12,7 +12,7 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%232a0f17'/%3E%3Ctext x='50' y='68' font-size='56' text-anchor='middle' fill='%23e3b96a'%3E%E2%99%A5%3C/text%3E%3C/svg%3E">
 <link rel="manifest" href="manifest.json">
 <title>Le calendrier de Mat</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Nunito+Sans:wght@400;600;700&family=Caveat:wght@500;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Nunito+Sans:wght@400;600;700&family=Caveat:wght@500;700&family=Fredoka:wght@600&display=swap">
 <style>
 /* Layout : nuit d'hiver couleur bordeaux, 24 portes dorées en grille, une fenêtre qui s'ouvre au centre */
 :root{
@@ -51,28 +51,70 @@ h1 span{color:var(--or)}
 .trajet .barre i{position:absolute;inset:0 auto 0 0;background:linear-gradient(90deg,var(--rose),var(--or));border-radius:4px}
 .trajet b{color:var(--or-pale);font-weight:700}
 
-.grille{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
-@media(min-width:620px){.grille{grid-template-columns:repeat(6,minmax(0,1fr));gap:14px}}
+/* Guirlande */
+.guirlande{position:relative;height:34px;margin:-28px calc(-1 * max(16px, env(safe-area-inset-left,0px))) -10px;overflow:hidden;
+  background:radial-gradient(circle at 50% -40%,transparent 62%,#c9a65e 63%,#c9a65e 66%,transparent 67%) 0 0/60px 34px repeat-x}
+.guirlande i{position:absolute;top:16px;width:10px;height:14px;border-radius:50% 50% 45% 45%;animation:clignote 2.6s ease-in-out infinite}
+.guirlande i:nth-child(even){animation-delay:1.3s}
+@keyframes clignote{50%{opacity:.45}}
 
-.porte{position:relative;aspect-ratio:3/4;max-width:100%;border:1px solid rgba(227,185,106,.35);border-radius:10px 10px 4px 4px;
-  background:linear-gradient(160deg,var(--nuit-3),var(--nuit-2));color:var(--or);cursor:pointer;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px;font:inherit;
-  transition:transform .25s ease, box-shadow .25s ease, border-color .25s}
-.porte::before{content:"";position:absolute;inset:5px;border:1px dashed rgba(227,185,106,.22);border-radius:7px 7px 2px 2px;pointer-events:none}
-.porte .num{font-family:var(--f-titre);font-weight:600;font-size:clamp(28px,7vw,40px);line-height:1}
-.porte .date{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--encre-douce)}
-.porte .etat{position:absolute;top:7px;right:8px;font-size:11px;color:var(--rose)}
-.porte:hover{transform:translateY(-2px);border-color:var(--or)}
-.porte:focus-visible{outline:2px solid var(--or);outline-offset:3px}
-.porte.verrou{opacity:.55;cursor:default}
-.porte.verrou .date{color:#9a7a83}
-.porte.aujourdhui{border-color:var(--or);box-shadow:0 0 0 1px var(--or),0 0 24px rgba(227,185,106,.45);animation:pulse 2.4s ease-in-out infinite}
-.porte.ouverte{background:linear-gradient(160deg,#6b2436,#4a1826)}
-.porte.ouverte .num{color:var(--rose)}
-.porte.final .num::after{content:" ♥";font-size:.5em;vertical-align:middle}
-.porte.secoue{animation:secoue .4s}
-@keyframes pulse{50%{box-shadow:0 0 0 1px var(--or),0 0 36px rgba(227,185,106,.7)}}
+.grille{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));column-gap:14px;row-gap:10px}
+@media(min-width:620px){.grille{grid-template-columns:repeat(6,minmax(0,1fr));column-gap:22px;row-gap:16px}}
+
+/* Une case = une forme (cadeau, boule, enveloppe, maison) + sa date */
+.porte{position:relative;background:none;border:0;padding:30px 0 0;font:inherit;cursor:pointer;color:inherit;
+  display:flex;flex-direction:column;align-items:center;gap:8px;transition:transform .25s ease}
+.porte:focus-visible{outline:2px solid var(--or);outline-offset:4px;border-radius:12px}
+.porte .date{font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#d99aa8;white-space:nowrap}
+.forme{position:relative;width:100%;aspect-ratio:1;display:grid;place-items:center;transition:transform .25s ease, box-shadow .25s, filter .25s}
+.num{position:relative;z-index:2;font-family:"Fredoka", var(--f-texte);font-weight:600;line-height:1}
+.porte:hover .forme{transform:translateY(-3px) rotate(-2deg)}
+.porte.verrou{cursor:default}
+.porte.verrou .forme{filter:saturate(.7) brightness(.86)}
+.porte.verrou .date{color:#a77583}
+.porte.aujourdhui .forme{animation:pulse 2.4s ease-in-out infinite}
+.porte.aujourdhui .date{color:var(--or)}
+.porte.secoue .forme{animation:secoue .4s}
+@keyframes pulse{0%,100%{transform:scale(1.04);filter:drop-shadow(0 0 8px rgba(243,199,106,.55))}50%{transform:scale(1.09);filter:drop-shadow(0 0 18px rgba(243,199,106,.9))}}
 @keyframes secoue{20%,60%{transform:translateX(-5px)}40%,80%{transform:translateX(5px)}}
+.ouverte .num.coeur{font-size:0}
+.ouverte .num.coeur::after{content:"♥";font-size:22px}
+
+/* Cadeau */
+.cadeau{border-radius:10px;background:var(--c);box-shadow:0 5px 0 rgba(0,0,0,.18)}
+.cadeau::before{content:"";position:absolute;inset:0;border-radius:10px;background:
+  linear-gradient(90deg,transparent 43%,rgba(255,255,255,.85) 43%,rgba(255,255,255,.85) 57%,transparent 57%),
+  linear-gradient(transparent 43%,rgba(255,255,255,.85) 43%,rgba(255,255,255,.85) 57%,transparent 57%)}
+.cadeau .noeud{position:absolute;top:-14px;left:50%;transform:translateX(-50%);width:42px;height:21px;z-index:1}
+.cadeau .num{width:38px;height:38px;border-radius:50%;background:#fff;color:#8f2a43;display:grid;place-items:center;font-size:21px;box-shadow:0 2px 0 rgba(0,0,0,.1)}
+.ouverte .cadeau{background:#fff3f1;box-shadow:inset 0 0 0 2px #f0a5b4}
+.ouverte .cadeau::before,.ouverte .cadeau .noeud{display:none}
+.ouverte .cadeau .num{background:#d94a5f;color:#fff}
+
+/* Boule */
+.boule{border-radius:50%;width:88%;margin-top:4px;background:radial-gradient(circle at 32% 28%,var(--c2),var(--c) 45%,var(--c3));box-shadow:0 8px 16px rgba(0,0,0,.3)}
+.boule::before{content:"";position:absolute;top:-34px;left:50%;width:1.5px;height:24px;background:#c9a65e}
+.boule::after{content:"";position:absolute;top:-11px;left:50%;transform:translateX(-50%);width:28%;height:12px;border-radius:3px 3px 1px 1px;background:linear-gradient(90deg,#9b7a35,#f3d48a,#9b7a35)}
+.boule .num{color:#fff;font-size:26px;text-shadow:0 2px 4px rgba(0,0,0,.25)}
+
+/* Enveloppe */
+.enveloppe{aspect-ratio:5/4;margin-top:10px;border-radius:6px;background:var(--c);box-shadow:0 6px 14px rgba(0,0,0,.28)}
+.enveloppe::before{content:"";position:absolute;inset:0 0 auto 0;height:58%;background:var(--c3);clip-path:polygon(0 0,100% 0,50% 100%);border-radius:6px 6px 0 0;transform-origin:top;transition:transform .4s}
+.enveloppe::after{content:"";position:absolute;inset:0;border-radius:6px;opacity:.6;background:
+  linear-gradient(to top right,transparent 49.4%,var(--c3) 50%,transparent 50.8%) left bottom/50% 100% no-repeat,
+  linear-gradient(to top left,transparent 49.4%,var(--c3) 50%,transparent 50.8%) right bottom/50% 100% no-repeat}
+.enveloppe .num{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 35% 30%,#e0566f,#a3203a 70%);color:#fde9e4;font-family:var(--f-titre);font-style:italic;font-size:22px;box-shadow:0 2px 3px rgba(0,0,0,.3)}
+.ouverte .enveloppe::before{transform:scaleY(-1)}
+.ouverte .enveloppe .num{background:#fff;color:#c2354f}
+
+/* Maison en pain d'épices */
+.maison{width:90%;margin-top:14px;aspect-ratio:1/.95;border-radius:4px 4px 6px 6px;background:var(--c);box-shadow:0 4px 0 #8a4f22}
+.maison .toit{position:absolute;left:-12%;right:-12%;top:-44%;height:48%;background:#e2564f;clip-path:polygon(50% 0,100% 100%,0 100%)}
+.maison .neige{position:absolute;left:-7%;right:-7%;top:-6%;height:22%;background:#fff;z-index:1;
+  clip-path:polygon(0 0,100% 0,100% 55%,92% 100%,84% 55%,76% 100%,68% 55%,60% 100%,52% 55%,44% 100%,36% 55%,28% 100%,20% 55%,12% 100%,4% 55%,0 70%)}
+.maison .fen{position:absolute;bottom:0;left:35%;width:30%;height:34%;border-radius:10px 10px 0 0;background:#5a3015;box-shadow:inset 0 0 0 2px #f3e2d2}
+.maison .num{color:#fff;font-size:21px;margin-top:-14px;text-shadow:0 1.5px 0 #7a421b}
+.ouverte .maison .fen,.aujourdhui .maison .fen{background:#ffd36e;box-shadow:inset 0 0 0 2px #fff,0 0 12px #ffd36e}
 
 .pied{text-align:center;font-family:var(--f-main);font-size:22px;color:var(--encre-douce)}
 
@@ -150,6 +192,7 @@ h1 span{color:var(--or)}
 
 <canvas id="neige" aria-hidden="true"></canvas>
 <main>
+  <div class="guirlande" aria-hidden="true"><i style="left:24px;background:#e3b96a"></i><i style="left:54px;background:#f0a3b0"></i><i style="left:84px;background:#fff6e6"></i><i style="left:114px;background:#e0566f"></i><i style="left:144px;background:#e3b96a"></i><i style="left:174px;background:#f0a3b0"></i><i style="left:204px;background:#fff6e6"></i><i style="left:234px;background:#e0566f"></i><i style="left:264px;background:#e3b96a"></i><i style="left:294px;background:#f0a3b0"></i><i style="left:324px;background:#fff6e6"></i><i style="left:354px;background:#e0566f"></i><i style="left:384px;background:#e3b96a"></i><i style="left:414px;background:#f0a3b0"></i><i style="left:444px;background:#fff6e6"></i><i style="left:474px;background:#e0566f"></i><i style="left:504px;background:#e3b96a"></i><i style="left:534px;background:#f0a3b0"></i><i style="left:564px;background:#fff6e6"></i><i style="left:594px;background:#e0566f"></i><i style="left:624px;background:#e3b96a"></i><i style="left:654px;background:#f0a3b0"></i><i style="left:684px;background:#fff6e6"></i><i style="left:714px;background:#e0566f"></i><i style="left:744px;background:#e3b96a"></i><i style="left:774px;background:#f0a3b0"></i><i style="left:804px;background:#fff6e6"></i><i style="left:834px;background:#e0566f"></i><i style="left:864px;background:#e3b96a"></i><i style="left:894px;background:#f0a3b0"></i><i style="left:924px;background:#fff6e6"></i><i style="left:954px;background:#e0566f"></i><i style="left:984px;background:#e3b96a"></i><i style="left:1014px;background:#f0a3b0"></i><i style="left:1044px;background:#fff6e6"></i><i style="left:1074px;background:#e0566f"></i><i style="left:1104px;background:#e3b96a"></i><i style="left:1134px;background:#f0a3b0"></i><i style="left:1164px;background:#fff6e6"></i><i style="left:1194px;background:#e0566f"></i><i style="left:1224px;background:#e3b96a"></i><i style="left:1254px;background:#f0a3b0"></i><i style="left:1284px;background:#fff6e6"></i><i style="left:1314px;background:#e0566f"></i><i style="left:1344px;background:#e3b96a"></i><i style="left:1374px;background:#f0a3b0"></i><i style="left:1404px;background:#fff6e6"></i><i style="left:1434px;background:#e0566f"></i><i style="left:1464px;background:#e3b96a"></i><i style="left:1494px;background:#f0a3b0"></i><i style="left:1524px;background:#fff6e6"></i><i style="left:1554px;background:#e0566f"></i><i style="left:1584px;background:#e3b96a"></i><i style="left:1614px;background:#f0a3b0"></i><i style="left:1644px;background:#fff6e6"></i><i style="left:1674px;background:#e0566f"></i><i style="left:1704px;background:#e3b96a"></i><i style="left:1734px;background:#f0a3b0"></i><i style="left:1764px;background:#fff6e6"></i><i style="left:1794px;background:#e0566f"></i><i style="left:1824px;background:#e3b96a"></i><i style="left:1854px;background:#f0a3b0"></i><i style="left:1884px;background:#fff6e6"></i></div>
   <div class="apercu" id="apercu" hidden>Mode aperçu : toutes les cases sont ouvertes (visible par toi seul)</div>
   <header>
     <div class="sur-titre">Du 26 novembre au 19 décembre</div>
@@ -236,8 +279,8 @@ function grille(){
     const d = enDate(jour.date);
     const dispo = APERCU || jour.date <= auj;
     const b = document.createElement("button");
-    b.className = "porte" + (dispo ? "" : " verrou") + (jour.date===auj ? " aujourdhui" : "") + (ouvertes.has(jour.date) ? " ouverte" : "") + (jour.type==="final" ? " final" : "");
-    b.innerHTML = `<span class="num">${i+1}</span><span class="date">${JOURS_FR[d.getDay()]} ${d.getDate()} ${MOIS_FR[d.getMonth()]}</span>${ouvertes.has(jour.date)?'<span class="etat">♥</span>':""}`;
+    b.className = "porte" + (dispo ? "" : " verrou") + (jour.date===auj ? " aujourdhui" : "") + (ouvertes.has(jour.date) ? " ouverte" : "");
+    b.innerHTML = forme(jour,i) + `<span class="date">${JOURS_FR[d.getDay()]} ${d.getDate()} ${MOIS_FR[d.getMonth()]}</span>`;
     b.setAttribute("aria-label", `Jour ${i+1}, ${d.getDate()} ${MOIS_FR[d.getMonth()]}` + (dispo ? "" : ", pas encore disponible"));
     b.addEventListener("click", ()=>{
       if(!dispo){
@@ -250,6 +293,29 @@ function grille(){
     });
     g.appendChild(b);
   });
+}
+
+const FORMES = ["cadeau","boule","enveloppe","maison"];
+const COUL = {
+  cadeau:[{c:"#e6b45a"},{c:"#f0a5b4"},{c:"#6fa585"},{c:"#e0566f"}],
+  boule:[{c:"#ef8fa6",c2:"#ffd9e2",c3:"#b44f6b"},{c:"#e2ae45",c2:"#fff1c4",c3:"#9b6d18"},{c:"#5f9e78",c2:"#d6f0dc",c3:"#2c5a41"},{c:"#d23a55",c2:"#ff9aa8",c3:"#8e1730"}],
+  enveloppe:[{c:"#fbe3dc",c3:"#efc2bd"},{c:"#f7d0cf",c3:"#e9b0ad"}],
+  maison:[{c:"#c47a3f"},{c:"#b56d36"}]
+};
+function quelleForme(jour,i){
+  if(jour.type==="lettre") return "enveloppe";
+  if(["chocolat","fleurs","bon"].includes(jour.type)) return "cadeau";
+  if(jour.type==="final") return "maison";
+  return FORMES[(i + Math.floor(i/4)) % 4];
+}
+function forme(jour,i){
+  const f = quelleForme(jour,i), pal = COUL[f][i % COUL[f].length];
+  const vars = Object.entries(pal).map(([k,v])=>`--${k}:${v}`).join(";");
+  const ouverte = ouvertes.has(jour.date);
+  let deco = "", coeur = ouverte && f!=="maison" ? " coeur" : "";
+  if(f==="cadeau") deco = `<svg class="noeud" viewBox="0 0 40 20" aria-hidden="true"><path d="M20 12 C10 -2 0 4 6 12 C10 17 16 14 20 12 C24 14 30 17 34 12 C40 4 30 -2 20 12Z" fill="#fff" stroke="#e7c3cb" stroke-width="1.2"/><circle cx="20" cy="12" r="3.6" fill="#f6dbe1"/></svg>`;
+  if(f==="maison") deco = `<span class="toit"></span><span class="neige"></span><span class="fen"></span>`;
+  return `<span class="forme ${f}" style="${vars}">${deco}<span class="num${coeur}">${ouverte && f==="maison" ? "♥ " : ""}${i+1}</span></span>`;
 }
 
 let dernierBouton = null, minuterie = null;
