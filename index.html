@@ -140,6 +140,17 @@ h1 span{color:var(--or)}
 .lien{align-self:flex-start;display:inline-flex;gap:8px;align-items:center;background:var(--encre);color:var(--papier);text-decoration:none;padding:10px 16px;border-radius:999px;font-weight:700}
 .lien:focus-visible{outline:2px solid var(--encre);outline-offset:3px}
 
+/* Frise des premiers échanges */
+.etapes{list-style:none;margin:0;padding:0 0 0 22px;display:flex;flex-direction:column;gap:26px;position:relative}
+.etapes::before{content:"";position:absolute;left:6px;top:8px;bottom:8px;width:2px;background:repeating-linear-gradient(#e3b9a0 0 6px,transparent 6px 11px)}
+.etapes li{position:relative;display:flex;flex-direction:column;gap:8px}
+.etapes li::before{content:"♥";position:absolute;left:-25px;top:-1px;font-size:15px;color:#c0465d;background:var(--papier);line-height:1.2}
+.etape-tete{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.etape-tete b{font-family:var(--f-titre);font-weight:600;font-size:22px}
+.etape-tete span{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#a0485c}
+.etapes p{margin:0;font-family:var(--f-main);font-size:22px;line-height:1.25}
+.etapes img{display:block;width:min(100%,300px);height:auto;border-radius:16px;box-shadow:0 8px 22px rgba(58,26,34,.22)}
+
 /* Enveloppe (lettre / fleurs / chocolat) */
 .colis{display:flex;flex-direction:column;align-items:center;gap:10px;padding:8px 0}
 .colis .icone{font-size:64px;line-height:1}
@@ -216,8 +227,13 @@ const IMG_PUZZLE = "data:image/svg+xml,"+encodeURIComponent(`<svg xmlns='http://
 
 const JOURS = [
   { date:"2026-11-26", titre:"Là où tout a commencé", type:"message",
-    texte:"(Ton petit mot sur vos premiers messages)",
-    photos:[{src:IMG_VIDE("Capture WhatsApp"),legende:"WhatsApp"},{src:IMG_VIDE("Capture Instagram"),legende:"Instagram"},{src:IMG_VIDE("Capture Snapchat"),legende:"Snapchat"},{src:IMG_VIDE("Capture SMS"),legende:"Messages"}], brouillon:true },
+    texte:"Avant d'ouvrir tous les autres cadeaux, retour au tout début…",
+    etapes:[
+      {app:"Snapchat", date:"2 avril 2021", texte:"Tout a commencé avec un simple « bon anniversaire »… et moi qui ne savais même pas qui tu étais 😂", src:"photos/j01-snapchat.jpg"},
+      {app:"Instagram", date:"20 avril 2021", texte:"Puis on est passés sur Instagram.", src:"photos/j01-instagram.jpg"},
+      {app:"Messages", date:"Juillet 2024", texte:"Et il aura fallu attendre plusieurs années, juillet 2024, pour qu'on échange enfin nos numéros.", src:"photos/j01-messages.jpg"},
+      {app:"WhatsApp", date:"14 juillet 2024", texte:"« Merciii ma ptite mat »… et la suite, tu la connais ♥", src:"photos/j01-whatsapp.jpg"}
+    ] },
   { date:"2026-11-27", titre:"Best moments together", type:"message", texte:"", photos:[], brouillon:true },
   { date:"2026-11-28", titre:"Nos chansons", type:"message", texte:"(Un mot sur la playlist)", lien:{texte:"▶ Écouter notre playlist", url:""}, brouillon:true },
   { date:"2026-11-29", titre:"Un peu de douceur", type:"chocolat", texte:"Premier dimanche de l'Avent. Quelqu'un va bientôt sonner chez toi… 🍫" },
@@ -329,6 +345,9 @@ function ouvrir(jour, i, bouton){
     h += `<div class="colis"><div class="icone">${icones[jour.type]}</div><p>${echap(jour.texte)}</p></div>`;
   } else if(jour.texte){
     h += `<p class="texte">${echap(jour.texte)}</p>`;
+  }
+  if(jour.etapes?.length){
+    h += `<ol class="etapes">` + jour.etapes.map(e=>`<li><div class="etape-tete"><b>${echap(e.app)}</b><span>${echap(e.date)}</span></div><p>${echap(e.texte)}</p><img src="${echap(e.src)}" alt="Capture ${echap(e.app)}" loading="lazy"></li>`).join("") + `</ol>`;
   }
   if(jour.photos?.length){
     h += `<div class="photos">` + jour.photos.map(p=>`<figure><img src="${echap(p.src)}" alt="${echap(p.legende||"Photo")}" loading="lazy">${p.legende?`<figcaption>${echap(p.legende)}</figcaption>`:""}</figure>`).join("") + `</div>`;
