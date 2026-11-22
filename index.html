@@ -140,6 +140,19 @@ h1 span{color:var(--or)}
 .lien{align-self:flex-start;display:inline-flex;gap:8px;align-items:center;background:var(--encre);color:var(--papier);text-decoration:none;padding:10px 16px;border-radius:999px;font-weight:700}
 .lien:focus-visible{outline:2px solid var(--encre);outline-offset:3px}
 
+/* Playlist */
+.chansons{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:14px;counter-reset:ch}
+.chansons li{counter-increment:ch;background:#fff;border-radius:12px;padding:14px 14px 16px;display:flex;flex-direction:column;gap:8px;box-shadow:0 3px 12px rgba(58,26,34,.08)}
+.ch-tete{display:flex;align-items:center;gap:12px}
+.ch-tete::before{content:counter(ch);font-family:var(--f-titre);font-weight:600;font-size:26px;color:#c0465d;min-width:20px}
+.ch-tete div{flex:1;min-width:0;display:flex;flex-direction:column}
+.ch-tete b{font-family:var(--f-titre);font-weight:600;font-size:21px;line-height:1.1}
+.ch-tete span{font-size:13px;color:var(--encre-douce)}
+.ecouter{flex:none;font-size:13px;font-weight:700;text-decoration:none;color:#fff;background:#7a2a3c;border-radius:999px;padding:7px 12px}
+.ecouter:focus-visible{outline:2px solid var(--encre);outline-offset:2px}
+.chansons p{margin:0;font-family:var(--f-main);font-size:21px;line-height:1.22}
+.chansons video{width:min(100%,300px);align-self:center;border-radius:12px;background:#000}
+
 /* Album photo */
 .album{display:flex;flex-direction:column;gap:26px;align-items:center;padding:4px 0 8px}
 .album figure{margin:0;width:min(100%,330px);background:#fff;padding:10px 10px 14px;border-radius:3px;box-shadow:0 6px 18px rgba(58,26,34,.18);display:flex;flex-direction:column;gap:10px}
@@ -254,7 +267,18 @@ const JOURS = [
       {src:"photos/j02-7.jpg", legende:"Une de nos dates les plus drôles, même si elle date énormément. Ce magnifique croque-monsieur, où tu m'as lâché la fameuse phrase : « J'ai mal au ieps, zebi »."},
       {src:"photos/j02-8.jpg", legende:"Et enfin, le jour où je t'ai envoyé des fleurs. J'avais gardé une capture de ton petit message trop mignon."}
     ] },
-  { date:"2026-11-28", titre:"Nos chansons", type:"message", texte:"(Un mot sur la playlist)", lien:{texte:"▶ Écouter notre playlist", url:""}, brouillon:true },
+  { date:"2026-11-28", titre:"Nos chansons", type:"message",
+    texte:"Huit chansons, huit souvenirs. Lis le mot, puis lance la musique ♪",
+    chansons:[
+      {titre:"Out of My League", artiste:"Fitz and The Tantrums", mot:"Certainement la musique dont on se souviendra le plus : notre musique des vacances en Crète. Tu m'as même demandé de l'écouter pendant mon échange, dans ton petit carnet. La musique qui me représente le mieux."},
+      {titre:"This Could Be Us", artiste:"Rae Sremmurd", mot:"On l'a écoutée tellement de fois en voiture qu'on la connaît quasiment par cœur tous les deux. De très bons souvenirs avec toi dessus, surtout sur les quais à Quimper, je m'en souviens très bien, au passage des feux rouges."},
+      {titre:"Macarena", artiste:"Damso", mot:"Un de tes artistes préférés, si ce n'est ton préféré. Macarena, on l'a entendue tellement de fois, notamment aux Vieilles Charrues."},
+      {titre:"I love you", artiste:"Dadju, Tayc", mot:"En parlant des Vieilles Charrues… Un de nos premiers moments ensemble. On n'était pas encore en couple, mais je me souviens qu'on a beaucoup chanté dessus, et qu'on a vu le concert ensemble."},
+      {titre:"Émotif (Booska 1H)", artiste:"PLK", mot:"On reste aux Vieilles Charrues. Une des musiques que tu connais le mieux. Ça me fait toujours beaucoup rire quand je t'entends lâcher une énorme prose de rap comme ça, en connaissant quasiment toutes les paroles."},
+      {titre:"September", artiste:"Earth, Wind & Fire", mot:"Alors celle-là, tu vas te dire : mais pourquoi il me sort ça ? Eh bien regarde la vidéo, j'espère que ça te parle.", video:"videos/j03-a.mp4"},
+      {titre:"Umbrella", artiste:"Rihanna, JAY-Z", mot:"Exactement la même chose. Umbrella de Rihanna, ça ne doit pas beaucoup te parler… Ah bah si, finalement, tu as beaucoup dansé dessus.", video:"videos/j03-b.mp4"},
+      {titre:"Tous ensemble on chantera", artiste:"PSG Ultras", mot:"Et que dire de la musique du PSG ? Je crois que c'était une de nos meilleures soirées : la première victoire du PSG en Ligue des Champions. On avait la voix un peu cassée… et qu'est-ce qu'il était bon, ce KFC en rentrant."}
+    ] },
   { date:"2026-11-29", titre:"Un peu de douceur", type:"chocolat", texte:"Premier dimanche de l'Avent. Quelqu'un va bientôt sonner chez toi… 🍫" },
   { date:"2026-11-30", titre:"Écoute-moi", type:"message", texte:"", audio:"", brouillon:true },
   { date:"2026-12-01", titre:"Coucou d'ici", type:"message", texte:"", photos:[], brouillon:true },
@@ -367,6 +391,9 @@ function ouvrir(jour, i, bouton){
   }
   if(jour.etapes?.length){
     h += `<ol class="etapes">` + jour.etapes.map(e=>`<li><div class="etape-tete"><b>${echap(e.app)}</b><span>${echap(e.date)}</span></div><p>${echap(e.texte)}</p><img src="${echap(e.src)}" alt="Capture ${echap(e.app)}" loading="lazy"></li>`).join("") + `</ol>`;
+  }
+  if(jour.chansons?.length){
+    h += `<ol class="chansons">` + jour.chansons.map(c=>`<li><div class="ch-tete"><div><b>${echap(c.titre)}</b><span>${echap(c.artiste)}</span></div><a class="ecouter" href="https://www.deezer.com/search/${encodeURIComponent(c.titre+" "+c.artiste.split(",")[0])}" target="_blank" rel="noopener">▶ Écouter</a></div><p>${echap(c.mot)}</p>${c.video?`<video controls playsinline preload="metadata" src="${echap(c.video)}"></video>`:""}</li>`).join("") + `</ol>`;
   }
   if(jour.album?.length){
     h += `<div class="album">` + jour.album.map(p=>`<figure><img src="${echap(p.src)}" alt="" loading="lazy"><figcaption>${echap(p.legende)}</figcaption></figure>`).join("") + `</div>`;
