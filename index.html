@@ -378,8 +378,8 @@ const MOIS_FR = ["janv","févr","mars","avr","mai","juin","juil","août","sept",
 const pad = n => String(n).padStart(2,"0");
 const aujourdHui = () => { const d=new Date(); return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`; };
 const enDate = s => { const [y,m,d]=s.split("-").map(Number); return new Date(y,m-1,d); };
-const ouvertes = (()=>{ try{ return new Set(JSON.parse(localStorage.getItem("mat-ouvertes")||"[]")); }catch(e){ return new Set(); } })();
-const memoriser = () => { try{ localStorage.setItem("mat-ouvertes", JSON.stringify([...ouvertes])); }catch(e){} };
+const ouvertes = APERCU ? new Set() : (()=>{ try{ const auj = aujourdHui(); return new Set(JSON.parse(localStorage.getItem("mat-ouvertes")||"[]").filter(d=>d<=auj)); }catch(e){ return new Set(); } })();
+const memoriser = () => { if(APERCU) return; try{ localStorage.setItem("mat-ouvertes", JSON.stringify([...ouvertes])); }catch(e){} };
 const echap = s => String(s??"").replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 
 document.getElementById("apercu").hidden = !APERCU;
@@ -439,7 +439,7 @@ function forme(jour,i){
 let dernierBouton = null, minuterie = null;
 function ouvrir(jour, i, bouton){
   dernierBouton = bouton;
-  ouvertes.add(jour.date); memoriser();
+  if(!APERCU){ ouvertes.add(jour.date); memoriser(); }
   const d = enDate(jour.date);
   const v = document.getElementById("voile");
   let h = `<div class="carte" role="dialog" aria-modal="true" aria-labelledby="titre-jour">
