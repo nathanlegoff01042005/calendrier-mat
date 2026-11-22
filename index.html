@@ -223,6 +223,7 @@ h1 span{color:var(--or)}
 .cb-zones{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 12px}
 .cb-zone,.cb-huile label{display:flex;gap:8px;align-items:center;font-size:15px;cursor:pointer}
 .cb-zone input,.cb-huile input{accent-color:#a0485c;width:18px;height:18px}
+.cb-totale{grid-column:1/-1;font-weight:700;color:#7a2a3c;padding-top:6px;border-top:1px dashed #ecd9c6}
 .cb-huile{display:flex;gap:18px;padding-top:6px;border-top:1px dashed #ecd9c6}
 .cb-envoi{display:flex;flex-direction:column;gap:10px;align-items:flex-start}
 .cb-envoi pre{margin:0;width:100%;white-space:pre-wrap;font-family:var(--f-main);font-size:21px;line-height:1.25;background:#f2e4d2;border-radius:10px;padding:10px 12px;user-select:text}
@@ -311,7 +312,7 @@ const JOURS = [
       {id:"coquin", titre:"Suédois… et un peu plus", desc:"45 minutes de massage suédois, puis 15 minutes nettement plus coquines 😏"},
       {id:"perso", titre:"Massage à la carte", desc:"Tu choisis toi-même les zones à masser, avec ou sans huile."}
     ],
-    zones:["Dos","Nuque et épaules","Tête et cuir chevelu","Visage","Bras","Mains","Ventre","Jambes","Pieds"] },
+    zones:["Dos","Nuque et épaules","Tête et cuir chevelu","Visage","Bras","Mains","Ventre","Fesses","Jambes","Pieds","Partie intime"] },
   { date:"2026-12-04", titre:"Une petite vidéo", type:"message", texte:"", video:"", brouillon:true },
   { date:"2026-12-05", titre:"Comment je te vois", type:"quiz", texte:"Devine ce que je pense de toi…", brouillon:true,
     questions:[
@@ -471,7 +472,7 @@ function choixBon(jour){
   const resume = ()=>{
     const o = jour.options.find(x=>x.id===etat.option);
     let t = `Mon bon massage : ${o.titre} (1 heure)`;
-    if(o.id==="perso") t += `\nZones : ${etat.zones.length?etat.zones.join(", "):"à toi de voir"}\n${etat.huile}`;
+    if(o.id==="perso") t += `\nZones : ${etat.zones.length===jour.zones.length?"la totale 😏":etat.zones.length?etat.zones.join(", "):"à toi de voir"}\n${etat.huile}`;
     return t;
   };
   const dessine = ()=>{
@@ -481,7 +482,7 @@ function choixBon(jour){
     if(etat.option==="perso"){
       h += `<div class="cb-perso"><p class="cb-titre">Les zones que tu veux</p><div class="cb-zones">` + jour.zones.map((zn,k)=>`
         <label class="cb-zone"><input type="checkbox" id="zone-${k}" value="${echap(zn)}"${etat.zones.includes(zn)?" checked":""}> ${echap(zn)}</label>`).join("") +
-        `</div><div class="cb-huile">` + ["Avec huile","Sans huile"].map(v=>`<label><input type="radio" name="huile" value="${v}"${etat.huile===v?" checked":""}> ${v}</label>`).join("") + `</div></div>`;
+        `<label class="cb-zone cb-totale"><input type="checkbox" id="zone-totale"${etat.zones.length===jour.zones.length?" checked":""}> La totale</label></div><div class="cb-huile">` + ["Avec huile","Sans huile"].map(v=>`<label><input type="radio" name="huile" value="${v}"${etat.huile===v?" checked":""}> ${v}</label>`).join("") + `</div></div>`;
     }
     if(etat.option){
       const msg = resume();
@@ -491,7 +492,8 @@ function choixBon(jour){
     }
     z.innerHTML = h;
     z.querySelectorAll('input[name="massage"]').forEach(i=>i.addEventListener("change",()=>{ etat.option=i.value; garder(); dessine(); }));
-    z.querySelectorAll('.cb-zone input').forEach(i=>i.addEventListener("change",()=>{ etat.zones = [...z.querySelectorAll('.cb-zone input:checked')].map(x=>x.value); garder(); dessine(); }));
+    z.querySelectorAll('.cb-zone:not(.cb-totale) input').forEach(i=>i.addEventListener("change",()=>{ etat.zones = [...z.querySelectorAll('.cb-zone:not(.cb-totale) input:checked')].map(x=>x.value); garder(); dessine(); }));
+    const tot = z.querySelector('#zone-totale'); if(tot) tot.addEventListener("change",()=>{ etat.zones = tot.checked ? [...jour.zones] : []; garder(); dessine(); });
     z.querySelectorAll('input[name="huile"]').forEach(i=>i.addEventListener("change",()=>{ etat.huile=i.value; garder(); dessine(); }));
     const c = z.querySelector(".cb-copier");
     if(c) c.addEventListener("click",()=>{ navigator.clipboard?.writeText(resume()).then(()=>{ c.textContent="Copié ✓"; },()=>{ c.textContent="Sélectionne le texte au-dessus"; }); });
