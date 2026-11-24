@@ -137,6 +137,7 @@ h1 span{color:var(--or)}
 .photos img{display:block;width:100%;height:auto;border-radius:2px}
 .photos figcaption{font-family:var(--f-main);font-size:19px;text-align:center;color:var(--encre-douce)}
 .carte video,.carte audio{width:100%;border-radius:8px}
+.carte audio{height:48px;margin-top:4px}
 .lien{align-self:flex-start;display:inline-flex;gap:8px;align-items:center;background:var(--encre);color:var(--papier);text-decoration:none;padding:10px 16px;border-radius:999px;font-weight:700}
 .lien:focus-visible{outline:2px solid var(--encre);outline-offset:3px}
 
@@ -310,7 +311,7 @@ const JOURS = [
       {titre:"Tous ensemble on chantera", artiste:"PSG Ultras", mot:"Et que dire de la musique du PSG ? Je crois que c'était une de nos meilleures soirées : la première victoire du PSG en Ligue des Champions. On avait la voix un peu cassée… et qu'est-ce qu'il était bon, ce KFC en rentrant."}
     ] },
   { date:"2026-11-29", titre:"Un peu de douceur", type:"chocolat", texte:"Premier dimanche de l'Avent. Quelqu'un va bientôt sonner chez toi… 🍫" },
-  { date:"2026-11-30", titre:"Écoute-moi", type:"message", texte:"", audio:"", brouillon:true },
+  { date:"2026-11-30", titre:"Écoute-moi", type:"message", texte:"À écouter ce soir, au lit, la lumière éteinte… et avec des écouteurs, c'est encore mieux 🎧", audio:"audio/j05-vocal.m4a" },
   { date:"2026-12-01", titre:"Position oiseau", type:"message",
     texte:"Bon, aujourd'hui, rien de spécial… j'espère que tu ne seras pas déçue.\nJe te souhaite une merveilleuse journée, avec cette magnifique photo de moi en position oiseau. J'espère qu'elle te plaît. Tu as le droit de l'enregistrer 😉",
     album:[{src:"photos/j06-oiseau.jpg", legende:"Moi, en position oiseau."}] },
